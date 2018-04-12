@@ -1,6 +1,6 @@
 ---
 title: "Gender-Pkg-NV-Salary"
-author: "Maria Guideng"
+author: "Maria Guidengg"
 output: rmarkdown::github_document
 ---
 
@@ -68,7 +68,7 @@ salary <- read.csv("C:/Users/Rie Guide/Google Drive/NerdyRie/IP - GitHub/Repos/G
 
 Let's check it out!
 
-```{r}
+```{r, results='asis', echo=TRUE}
 str(salary)
 ```
 
