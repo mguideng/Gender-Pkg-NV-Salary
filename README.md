@@ -116,7 +116,6 @@ Task 2. Isolate first names.
 
 If a comma is present in `Employee.Name` ("guideng, maria"), the first element of the string will be taken as `First.Name`. Otherwise ("maria guideng"), the first element of the string will be taken.
 
-Essentially, I want to take the first word (or element of the string) and put 
 ```
 salary$First.Name <- sub(".*\\, ", "", salary$Employee.Name)  # If comma, take element following comma.
 salary$First.Name <- sub(" .*", "", salary$First.Name)        # Otherwise, just take first element.
