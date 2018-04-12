@@ -72,21 +72,6 @@ str(salary)
 ```{r}
 head(salary,5)
 ```
-> ```
-> [Out]:
-> #   Employee.Name      Job.Title                      Base.Pay   Overtime.Pay  Other.Pay  Benefits  Total.Pay
-> # 1 Jay D Fraser       CITY MANAGER                   130742.05  0             31071.55   54022.18  161813.6
-> # 2 Scott P Hansen     DIRECTOR/PUBLIC WORKS          123417.9   0             34365.3    40143.36  157783.2
-> # 3 Roger C Hall       DIRECTOR/PARKS AND RECREATION  99300.74   0             47302.25   50571.52  146603.0
-> # 4 David R Olsen      CITY ATTORNEY                  126717.8   0             19325.8    50349.9   146043.6
-> # 5 Kevin D Nicholson  FIRE CHIEF                     129678.9   0             15122.3    51263.28  144801.2
-> #   Total.PayBenefits  Year   Notes   Agency          Status
-> # 1 215835.8           2016   <NA>    Boulder City    FT
-> # 2 197926.6           2016   <NA>    Boulder City    FT
-> # 3 197174.5           2016   <NA>    Boulder City    FT
-> # 4 196393.5           2016   <NA>    Boulder City    FT
-> # 5 196064.5           2016   <NA>    Boulder City    FT
-> ```
 
 There's a total of 146,662 employees. We're only interested in using the `Employee.Name` variable here. Since the names are combined, we'll need to parse out the vector of character strings. 
 
@@ -123,17 +108,6 @@ It inferred the gender of 93% of the total employees (136,306 of 146,662 total).
 ```{r}
 head(salary_gender,5)
 ```
->```
-> [Out:]
-> # A tibble: 5 x 6
-> #   name    proportion_male   proportion_female   gender    year_min  year_max
-> #   <chr>   <dbl>             <dbl>               <chr>     <dbl>     <dbl>
-> # 1 aalya   0.                1.00                female    1932.     2012.
-> # 2 aamir   1.00              0.                  male      1932.     2012.
-> # 3 aarin   0.564             0.436               male      1932.     2012.
-> # 4 aarin   0.564             0.436               male      1932.     2012.
-> # 5 aarin   0.564             0.436               male      1932.     2012.
->```
 
 The gender function took a character vector of names and a range of years to predict the gender. Here, "aalya" has been proportionately all female, while "aamir" has undoubtedly been a male name. It's not so clear for the name "aarin" however, which has historically been nearly half and half: 56.4% being males and 43.6% females. However, it favors a male gender and is assigned as such.
 
@@ -156,15 +130,6 @@ salary %>%
   mutate(percent=round((employees/sum(employees)*100))) %>%
   arrange(desc(percent))
 ```
->```
-> [Out:]
-> # A tibble: 3 x 3
-> #    Gender    employees   percent
-> #    <chr>     <int>       <dbl>
-> # 1  female    77743       53.
-> # 2  male      58563       40.
-> # 3  <NA>      10356       7.
->```
 
 Based on our work so far, women dominate the workforce when it comes to public service in Nevada. It's estimated to be at 53% but it would actually be more since it doesn't capture any of the 7% of workers whose gender is undetermined. Let's set them to "undetm" in our data.
 ```{r}
@@ -182,24 +147,6 @@ undetm <- salary %>%
 print(undetm)
 ```
 
->```
-> [Out:]
-> #  A tibble: 10,324 x 4
-> #  Groups:   First.Name, Employee.Name [10,292]
-> #   First.Name    Employee.Name                             Agency                        n
-> #   <chr>         <chr>                                     <chr>                         <int>
-> # 1 redacted      Redacted Undercover Redacted Undercover   Henderson                     16
-> # 2 undercover    Undercover                                Sparks                        8
-> # 3 escamilla     ESCAMILLA MARTIN                          University Medical Center     2
-> # 4 gonzalez      GONZALEZ ANTHONY                          Clark County                  2
-> # 5 gonzalez      GONZALEZ TOMAS                            Clark County                  2
-> # 6 grana         GRANA JOHN                                Clark County                  2
-> # 7 morales       MORALES JOSE                              Clark County                  2
-> # 8 noi           PAPPAS, NOI                               Clark County                  2
-> # 9 orozco        OROZCO ELIZABETH                          University Medical Center     2
-> # 10 sandoval     SANDOVAL SANDRA                           University Medical Center     2
-> # ... with 10,314 more rows
->```
 
 Which agencies have employees with the most undetermined genders?
 ```{r}
@@ -208,24 +155,6 @@ undetm %>%
   summarize (n = n()) %>%
   arrange(-n)
 ```
-
-> ```
-> [Out:]
-> # A tibble: 81 x 2
-> # Agency                                  n
-> # <chr>                                <int>
-> # 1 Clark County                       2906
-> # 2 University Medical Center          2371
-> # 3 Clark County School District       1837
-> # 4 State of Nevada                     649
-> # 5 Washoe County School District       430
-> # 6 University of Nevada, Las Vegas     303
-> # 7 University of Nevada, Reno          293
-> # 8 Elko County                         213
-> # 9 Las Vegas Metro Police Department   191
-> # 10 Las Vegas                          134
-># ... with 71 more rows
->``` 
 
 ## Fixing undetermined genders
 
@@ -295,12 +224,6 @@ table(salary$Gender)
 prop.table(table(salary$Gender))
 ```
 
-```
-[Out:]
-# female       male     undetm 
-# 0.5518     0.3948     0.0533
-```
-
 Yes, that's a bit better! Applying these fixes matched gender for another ~2,500 employees to 138,839 total employees. It's now down to 5% overall. How about on the agency level?
 
 ```{r}
@@ -316,23 +239,6 @@ undetm %>%
   arrange(-n)
 ```
 
-```
-[Out:]
-# A tibble: 81 x 2
-#   Agency                                n
-#   <chr>                             <int>
-# 1 Clark County                       2907
-# 2 Clark County School District       1784
-# 3 State of Nevada                     647
-# 4 University Medical Center           444
-# 5 University of Nevada, Las Vegas     228
-# 6 Elko County                         213
-# 7 University of Nevada, Reno          198
-# 8 Las Vegas Metro Police Department   188
-# 9 Washoe County School District       177
-#10 Las Vegas                           133
-# ... with 71 more rows
-```
 
 There's improvements pretty much across the board for all agencies, especially with UMC.
 
@@ -341,13 +247,6 @@ Ok, so our last step is to revert back to the original structure of 12 columns, 
 names(salary)
 ```
 
-```
-[Out:]
-#  [1] "Employee.Name"     "Job.Title"         "Base.Pay"          "Overtime.Pay"      "Other.Pay"        
-#  [6] "Benefits"          "Total.Pay"         "Total.PayBenefits" "Year"              "Notes"            
-# [11] "Agency"            "Status"            "First.Name"        "stringcount"       "string1"          
-# [16] "string1len"        "string2"           "stringN"           "Gender"           
-```
 
 ```{r}
 salary <- salary[, -c(13:18)]   # delete columns 13 through 18
@@ -372,5 +271,4 @@ write.csv(salary, "all-Nevada-2016-with-gender.csv")
 
 **Project purposes**
   * Adding a gender column using Gender, an R package.
-  * Being new to R, I'm keen on learning how to do things better. Suggestions for improvement are appreciated.
-
+  * Being new to R, suggestions for improvement are appreciated.
