@@ -2,8 +2,11 @@
 title: "Gender-Pkg-NV-Salary"
 author: "Maria Guideng"
 output: rmarkdown::github_document
-toc: yes
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
 ## Application of Gender R package for my learning
 
