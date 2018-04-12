@@ -68,11 +68,11 @@ salary <- read.csv("C:/Users/Rie Guide/Google Drive/NerdyRie/IP - GitHub/Repos/G
 
 Let's check it out!
 
-```{r, results='asis', echo=TRUE}
+```{r, eval=TRUE}
 str(salary)
 ```
 
-```{r}
+```{r, eval=TRUE}
 head(salary,5)
 ```
 
