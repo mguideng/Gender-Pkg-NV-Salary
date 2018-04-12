@@ -50,7 +50,7 @@ If no method or years are specified, `gender()` will default to the ssa method f
 
 `stringr` and `dplyr` will help to manipulate the names and summarize tabular data.
 
-```{r}
+```{r warning=F, comment=F, message=F}
 #install.packages(c("stringr", "dplyr"))
 library(stringr)
 library(dplyr)
@@ -93,26 +93,22 @@ There's a total of 146,662 employees. We're only interested in using the `Employ
 ## Preparing the salary data
 Before passing the data through the gender function, it has to be prepped. The historical data of names within the package doesn't have any non-character symbols (e.g., digits, periods, hyphens, whitespace). It also uses lower title cases. Then we'll isolate the first names. The expected naming order convention is that the first name will be followed by the the middle and last names ("maria guideng"). It's also common to report the first name following a comma ("guideng, maria"). Our data should mimic these features. So those are three tasks so far. 
 
-Task 1. Remove non-characters. The order these are run is important.
 ```{r}
+# Task 1. Remove non-characters. The order these are run is important.
+
 salary$Employee.Name <- str_replace_all(salary$Employee.Name, "\\d |\\d", "")  # Remove digits.
 salary$Employee.Name <- gsub("\\.", " ", salary$Employee.Name)                 # Replace periods with a space.
 salary$Employee.Name <- gsub("-", " ", salary$Employee.Name)                   # Replace hypens with a space.
 salary$Employee.Name <- gsub("   ", " ", salary$Employee.Name)                 # Remove triple spaces.
 salary$Employee.Name <- gsub("  ", " ", salary$Employee.Name)                  # Remove double spaces.
-```
 
-Task 2. Isolate first names.
+# Task 2. Isolate first names. If a comma is present in `Employee.Name` ("guideng, maria"), the first element of the string will be taken as `First.Name`. Otherwise ("maria guideng"), the first element of the string will be taken.
 
-If a comma is present in `Employee.Name` ("guideng, maria"), the first element of the string will be taken as `First.Name`. Otherwise ("maria guideng"), the first element of the string will be taken.
-
-```{r}
 salary$First.Name <- sub(".*\\, ", "", salary$Employee.Name)  # If comma, take element following comma.
 salary$First.Name <- sub(" .*", "", salary$First.Name)        # Otherwise, just take first element.
-```
 
-Task 3. Lower case the first names.
-```{r}
+
+# Task 3. Lower case the first names.
 salary$First.Name <- str_to_lower(salary$First.Name)
 ```
 
@@ -125,7 +121,7 @@ salary_gender <- gender(salary$First.Name)
 
 It inferred the gender of 93% of the total employees (136,306 of 146,662 total). That's pretty good! Let's take a peek.
 ```{r}
-head(salary_gender)
+head(salary_gender,5)
 ```
 >```
 > [Out:]
@@ -171,7 +167,7 @@ salary %>%
 >```
 
 Based on our work so far, women dominate the workforce when it comes to public service in Nevada. It's estimated to be at 53% but it would actually be more since it doesn't capture any of the 7% of workers whose gender is undetermined. Let's set them to "undetm" in our data.
-```
+```{r}
 salary$Gender[is.na(salary$Gender)] <- "undetm"
 ```
 
@@ -263,26 +259,17 @@ salary$string1 <- sapply(strsplit(salary$Employee.Name, " "), function(x) x[1]) 
 salary$string1len <- nchar(salary$string1)                                       # Length of 1st string.
 salary$string2 <- sapply(strsplit(salary$Employee.Name, " "), function(x) x[2])  # 2nd string.
 salary$stringN <- sapply(strsplit(salary$Employee.Name, " "), tail, 1)           # Last string.
-```
 
-Fix issue 2. UMC reports last names first
-```{r}
+# Fix issue 2. UMC reports last names first
 salary$First.Name <- ifelse(salary$Agency %in% c("University Medical Center"), salary$string2, salary$First.Name)
-```
 
-Fix issue 3. Suffix
-```{r}
+# Fix issue 3. Suffix
 salary$First.Name <- ifelse(salary$First.Name %in% c("jr","sr", "ii", "iii", "iv"), salary$string2, salary$First.Name)
-```
 
-Fix issue 4. First string = Last string
-```{r}
+# Fix issue 4. First string = Last string
 salary$First.Name <- ifelse(salary$string1 == salary$stringN & salary$stringcount>1, salary$string2, salary$First.Name)
-```
 
-Fix issue 5. Initials
-These are identified as those with `First.Name` having a length of 1 (basically, an initial) AND a count of 3+ elements in `Employee.Name`.
-```{r}
+# Fix issue 5. Initials. These are identified as those with `First.Name` having a length of 1 (basically, an initial) AND a count of 3+ elements in `Employee.Name`.
 salary$First.Name <- ifelse(salary$string1len == 1 & salary$stringcount>=3, salary$string2, salary$First.Name)
 ```
 
@@ -290,17 +277,13 @@ salary$First.Name <- ifelse(salary$string1len == 1 & salary$stringcount>=3, sala
 Ready to rerun that gender function on this updated salary dataframe.
 ```{r}
 salary_gender <- gender(salary$First.Name)
-```
 
-Again, just keep the "name" and "gender" variables and rename them, as well as remove the dupes.
-```{r}
+# Again, just keep the "name" and "gender" variables and rename them, as well as remove the dupes.
 salary_gender <- salary_gender[c("name", "gender")]
 colnames(salary_gender) <- c("First.Name", "Gender")
 salary_gender <- subset(salary_gender, !duplicated(salary_gender$First.Name))
-```
 
-Now we can re-join it to the salary dataframe by `First.Name`, but first remove `Gender` from the previous run.
-```{r}
+# Now we can re-join it to the salary dataframe by `First.Name`, but first remove `Gender` from the previous run.
 salary$Gender <- NULL
 salary <- left_join(salary, salary_gender)
 salary$Gender[is.na(salary$Gender)] <- "undetm"
@@ -309,14 +292,6 @@ salary$Gender[is.na(salary$Gender)] <- "undetm"
 Any better from that unknown 7%?
 ```{r}
 table(salary$Gender)
-```
-
-```
-[Out:]
-# female    male   undetm 
-#  80935   57904     7823 
-```
-```{r}
 prop.table(table(salary$Gender))
 ```
 
