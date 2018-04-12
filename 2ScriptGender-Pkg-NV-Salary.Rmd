@@ -5,33 +5,6 @@ output: html_document
 toc: yes
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
-
-
-###
-
 ## Application of Gender R package for my learning
 
 **About**
@@ -41,11 +14,11 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 The input and output files are located in the `data` folder. In its original form, the input file _all-nevada-2016.csv_ is obtained from a [separate repository](https://github.com/mguideng/Nevada-Public-Salaries) and has 12 columns. The output file _all-nevada-2016-with-gender.csv_ is the same, but has an additional column for employee gender. My contribution is the R script that adds this feature through the use of this package.
 
 ## Exploring what's in the gender package
-```{r}
+```{r warning=F, comment=T, message=F}
 #install.packages("gender")
 library(gender)
 ls("package:gender")
-help(package = "gender")
+#help(package = "gender")
 ```
 
 After referencing the package's documentation and vignettes, I see that the basic function is `gender()`. One of its cool features is that it accounts for the fact that genders associated with names can change over time. Also, loading this package prompts you to install the `genderdata` package, which contains several datasets that permits the user to make predictions based on different time periods and  geographical regions. As such, `gender()` allows you to choose a method to pass a set of names, places and birth years through the function.
