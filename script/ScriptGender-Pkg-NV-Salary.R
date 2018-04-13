@@ -1,11 +1,11 @@
-##################################################################
-#                Repository: Gender-Pkg-NV-Salary                #
 #----------------------------------------------------------------#
-# Script purpose:                                                #
+#                      Gender-Pkg-NV-Salary                      #
+#----------------------------------------------------------------#
+# Script purpose                                                 #
 #   Prepares dataset on Nevada salary data (all-nevada-2016.csv) #
-#   Adds a gender column using Gender, an R package.             #
-# See README for more details                                    #
-##################################################################
+#   Adds a gender column using Gender, an R package              #
+# See README for details                                         #
+#----------------------------------------------------------------#
 
 # Exploring what's in the gender package
 ##################################################################
@@ -17,13 +17,16 @@ help(package = "gender")
 
 # Bringing in other packages & the data
 ##################################################################
-
-#install.packages(c("stringr", "dplyr"))
+#install.packages(c("stringr", "dplyr", "RCurl"))
 library(stringr)
 library(dplyr)
+library(RCurl)
 
-# Import data
-#salary = read.csv('.../data/all-nevada-2016.csv')
+# Import & explore data
+urlfile <- 'https://raw.githubusercontent.com/mguideng/Gender-Pkg-NV-Salary/master/data/all-nevada-2016.csv'
+salary <- read.csv(urlfile)
+salary$X <- NULL
+
 str(salary)
 head(salary,5)
 
@@ -31,15 +34,15 @@ head(salary,5)
 ##################################################################
 
 # Task 1. Remove non-characters
-salary$Employee.Name <- str_replace_all(salary$Employee.Name, "\\d |\\d", "")  # Remove digits.
-salary$Employee.Name <- gsub("\\.", " ", salary$Employee.Name)                 # Replace periods with a space.
-salary$Employee.Name <- gsub("-", " ", salary$Employee.Name)                   # Replace hypens with a space.
-salary$Employee.Name <- gsub("   ", " ", salary$Employee.Name)                 # Remove triple spaces.
-salary$Employee.Name <- gsub("  ", " ", salary$Employee.Name)                  # Remove double spaces.
+salary$Employee.Name <- str_replace_all(salary$Employee.Name, "\\d |\\d", "")     # Remove digits
+salary$Employee.Name <- gsub("\\.", " ", salary$Employee.Name)                    # Replace '.' with a space
+salary$Employee.Name <- gsub("-", " ", salary$Employee.Name)                      # Replace '-' with a space
+salary$Employee.Name <- gsub("   ", " ", salary$Employee.Name)                    # Remove triple spaces
+salary$Employee.Name <- gsub("  ", " ", salary$Employee.Name)                     # Remove double spaces
 
 # Task 2. Isolate first names
-salary$First.Name <- sub(".*\\, ", "", salary$Employee.Name)  # If comma, take string following comma.
-salary$First.Name <- sub(" .*", "", salary$First.Name)        # Otherwise, just take first string.
+salary$First.Name <- sub(".*\\, ", "", salary$Employee.Name)     # If comma, take element following ','
+salary$First.Name <- sub(" .*", "", salary$First.Name)           # Otherwise, just take first element.
 
 # Task3. Lower case the first names
 salary$First.Name <- str_to_lower(salary$First.Name)
@@ -49,12 +52,10 @@ salary$First.Name <- str_to_lower(salary$First.Name)
 salary_gender <- gender(salary$First.Name)
 head(salary_gender,5)
 
-# Join to main salary dataframe 
+# Join to main salary dataframe
 salary_gender <- salary_gender[c("name", "gender")]
 colnames(salary_gender) <- c("First.Name", "Gender")
-
 salary_gender <- subset(salary_gender, !duplicated(salary_gender$First.Name))
-
 salary <- left_join(salary, salary_gender)
 
 # Gender distribution?
@@ -84,20 +85,20 @@ undetm %>%
 # Fixing undetermined genders
 ##################################################################
 # Issues:
-# 1. Some names are "redacted" and "undercover" and some ethnic names. Keep as undetm.
-# 2. University Medical Center reports last name first without a comma preface.
+# 1. Some names are "redacted" / "undercover" and some ethnic names. Keep as undetm.
+# 2. University Medical Center reports last name first without a comma preface
 # 3. First names sometimes appear as suffixes ("sr"|"iii"|"iv")
-# 4. Instances where first and last strings of Employee.Name are the same.
-# 5. Lastly, single-initial letters are being picked up as first names.
+# 4. Instances where first and last strings of Employee.Name are the same
+# 5. Single-initial letters are being picked up as first names
 
-# Solution for issues 2 - 5: adopt second element in Employee.Name as the first name.
+# Solution for issues 2 - 5: adopt second element as the first name
 ##################################################################
-# First, split strings for later pattern matching functions.
-salary$stringcount <- str_count(salary$Employee.Name," ")+1 # Count of all elements in a string.
-salary$string1 <- sapply(strsplit(salary$Employee.Name, " "), function(x) x[1]) # 1st string only.
-salary$string1len <- nchar(salary$string1)  # Length of 1st string.
-salary$string2 <- sapply(strsplit(salary$Employee.Name, " "), function(x) x[2]) # 2nd string.
-salary$stringN <- sapply(strsplit(salary$Employee.Name, " "), tail, 1) # last string.
+# First, split strings for later pattern matching functions
+salary$stringcount <- str_count(salary$Employee.Name," ")+1                         # Count of all elements in string
+salary$string1 <- sapply(strsplit(salary$Employee.Name, " "), function(x) x[1])     # 1st elem
+salary$string1len <- nchar(salary$string1)                                          # Length of 1st elem
+salary$string2 <- sapply(strsplit(salary$Employee.Name, " "), function(x) x[2])     # 2nd elem
+salary$stringN <- sapply(strsplit(salary$Employee.Name, " "), tail, 1)              # Last elem
 
 # Fix issue 2. UMC
 salary$First.Name <- ifelse(salary$Agency %in% c("University Medical Center"), salary$string2, salary$First.Name)
@@ -126,7 +127,6 @@ salary$Gender[is.na(salary$Gender)] <- "undetm"
 # Any better by % overall?
 table(salary$Gender)
 prop.table(table(salary$Gender))
-
 
 # Any better by agency?
 undetm <- salary %>%
