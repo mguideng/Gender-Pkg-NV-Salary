@@ -267,16 +267,16 @@ Success. It's now ready for export.
 write.csv(salary, "all-Nevada-2016-with-gender.csv")
 ```
 
-**Output dimensions**
+**Output dimensions**  
 
 | File                | Total Rows | Total Columns | Columns                                                                                                                                  |
 |---------------------|------------|---------------|------------------------------------------------------------------------------------------------------------------------------------------|
 | all-Nevada-2016-with-gender.csv | 146,662     | 13            | Employee.Name, Job.Title, Base.Pay, Overtime.Pay, Other.Pay, Benefits, Total.Pay, Total.PayBenefits, Year, Notes, Agency, Status, Gender |
 
-**Exploration ideas**
-  * How many women work in government versus men and for which agencies?
+**Exploration ideas**  
+  * How many women work in government versus men and for which agencies?  
   * How is pay different between men and women by job titles?
 
-**Project purposes**
-  * Adding a gender column using Gender, an R package.
+**Project purposes**  
+  * Adding a gender column using Gender, an R package.  
   * Being new to R, suggestions for improvement are appreciated.
