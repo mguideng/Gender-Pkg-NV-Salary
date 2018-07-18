@@ -438,6 +438,10 @@ write.csv(salary, "all-Nevada-2016-with-gender.csv")
 </tbody>
 </table>
 
-**Exploration ideas** \* How many women work in government versus men and for which agencies? \* How is pay different between men and women by job titles?
+**Exploration ideas**
+\* How many women work in government versus men and for which agencies?
+\* How is pay different between men and women by job titles?
 
-**Project purposes** \* Adding a gender column using Gender, an R package. \* Being new to R, suggestions for improvement are appreciated.
+**Project purposes**
+\* Adding a gender column using Gender, an R package. 
+\* Being new to R, suggestions for improvement are appreciated.
